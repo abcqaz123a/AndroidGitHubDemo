@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build:
-    name: Build HoleLight V0.3.2 APK
+    name: Build HoleLight V0.3.3 APK
     runs-on: ubuntu-latest
 
     steps:
@@ -40,41 +40,18 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Find V0.3.2 source ZIP
-        shell: bash
-        run: |
-          set -e
-
-          mapfile -t ZIP_FILES < <(
-            find . -type f \
-              -iname '*v0.3.2*source*.zip' \
-              -not -path './.git/*'
-          )
-
-          if [ "${#ZIP_FILES[@]}" -ne 1 ]; then
-            echo "ERROR: Expected exactly one V0.3.2 source ZIP."
-            find . -type f -iname '*.zip'
-            exit 1
-          fi
-
-          echo "ZIP_FILE=${ZIP_FILES[0]}" >> "$GITHUB_ENV"
-
-      - name: Extract HoleLight project
+      - name: Extract source
         shell: bash
         run: |
           set -e
 
           mkdir -p holelight-project
-          unzip -o "$ZIP_FILE" -d holelight-project
+          unzip -o HoleLight-AOD-v0.3.3-source.zip -d holelight-project
 
-          if [ -f holelight-project/HoleLight-AOD-v0.3.2/settings.gradle.kts ]; then
+          if [ -f holelight-project/HoleLight-AOD-v0.3.3/settings.gradle.kts ]; then
             shopt -s dotglob nullglob
-            mv holelight-project/HoleLight-AOD-v0.3.2/* holelight-project/
-            rmdir holelight-project/HoleLight-AOD-v0.3.2
-          elif [ ! -f holelight-project/settings.gradle.kts ]; then
-            echo "ERROR: Cannot find settings.gradle.kts"
-            find holelight-project -maxdepth 5 -type f
-            exit 1
+            mv holelight-project/HoleLight-AOD-v0.3.3/* holelight-project/
+            rmdir holelight-project/HoleLight-AOD-v0.3.3
           fi
 
           test -f holelight-project/settings.gradle.kts
@@ -95,7 +72,7 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: HoleLight-v0.3.2-debug-apk
+          name: HoleLight-v0.3.3-debug-apk
           path: holelight-project/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7
