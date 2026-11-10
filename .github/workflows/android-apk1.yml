@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'HoleLight-AOD-v0.3.5-source.zip'
+      - 'HoleLight-AOD-v0.4.0-source.zip'
       - '.github/workflows/android-apk.yml'
 
 permissions:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build:
-    name: Build HoleLight V0.3.5 APK
+    name: Build HoleLight V0.4.0 APK
     runs-on: ubuntu-latest
 
     steps:
@@ -45,12 +45,12 @@ jobs:
         run: |
           set -e
           mkdir -p holelight-project
-          unzip -o HoleLight-AOD-v0.3.5-source.zip -d holelight-project
+          unzip -o HoleLight-AOD-v0.4.0-source.zip -d holelight-project
 
-          if [ -f holelight-project/HoleLight-AOD-v0.3.5/settings.gradle.kts ]; then
+          if [ -f holelight-project/HoleLight-AOD-v0.4.0/settings.gradle.kts ]; then
             shopt -s dotglob nullglob
-            mv holelight-project/HoleLight-AOD-v0.3.5/* holelight-project/
-            rmdir holelight-project/HoleLight-AOD-v0.3.5
+            mv holelight-project/HoleLight-AOD-v0.4.0/* holelight-project/
+            rmdir holelight-project/HoleLight-AOD-v0.4.0
           fi
 
           test -f holelight-project/settings.gradle.kts
@@ -71,7 +71,7 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: HoleLight-v0.3.5-debug-apk
+          name: HoleLight-v0.4.0-debug-apk
           path: holelight-project/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7
