@@ -1,10 +1,11 @@
+
 name: Build HoleLight Android APK
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'HoleLight-AOD-v0.1.0.zip'
+      - 'HoleLight-AOD-v0.2.0-source.zip'
       - '.github/workflows/android-apk.yml'
 
 permissions:
@@ -12,7 +13,7 @@ permissions:
 
 jobs:
   build:
-    name: Build HoleLight APK
+    name: Build HoleLight V0.2.0 APK
     runs-on: ubuntu-latest
 
     steps:
@@ -38,7 +39,13 @@ jobs:
         run: |
           sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
-      # 5. 解压 HoleLight 工程并修正目录层级
+      # 5. 配置 Gradle 8.9
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      # 6. 解压 V0.2.0 源码工程
       - name: Extract HoleLight project
         shell: bash
         run: |
@@ -46,17 +53,17 @@ jobs:
 
           mkdir -p holelight-project
 
-          unzip -o HoleLight-AOD-v0.1.0.zip -d holelight-project
+          unzip -o HoleLight-AOD-v0.2.0-source.zip -d holelight-project
 
-          if [ -f holelight-project/HoleLight-AOD-v0.1.0/settings.gradle.kts ]; then
+          if [ -f holelight-project/HoleLight-AOD-v0.2.0/settings.gradle.kts ]; then
             shopt -s dotglob nullglob
-            mv holelight-project/HoleLight-AOD-v0.1.0/* holelight-project/
-            rmdir holelight-project/HoleLight-AOD-v0.1.0
+            mv holelight-project/HoleLight-AOD-v0.2.0/* holelight-project/
+            rmdir holelight-project/HoleLight-AOD-v0.2.0
           elif [ -f holelight-project/settings.gradle.kts ]; then
             echo "Project files are already in the correct directory."
           else
             echo "ERROR: Cannot find settings.gradle.kts"
-            find holelight-project -maxdepth 4 -type f
+            find holelight-project -maxdepth 5 -type f
             exit 1
           fi
 
@@ -65,18 +72,18 @@ jobs:
           test -f holelight-project/app/build.gradle.kts
           test -f holelight-project/app/src/main/AndroidManifest.xml
 
-          echo "HoleLight project extraction successful."
+          echo "HoleLight V0.2.0 extraction successful."
 
-      # 6. 编译 Debug APK
+      # 7. 编译 Debug APK
       - name: Build Debug APK
         run: |
           gradle --no-daemon -p holelight-project assembleDebug
 
-      # 7. 上传 APK 编译产物
+      # 8. 上传 APK 编译产物
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: HoleLight-debug-apk
+          name: HoleLight-v0.2.0-debug-apk
           path: holelight-project/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7
