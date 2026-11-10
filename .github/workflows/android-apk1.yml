@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'HoleLight-AOD-v0.5.3-source.zip'
+      - 'HoleLight-AOD-v0.5.4-source.zip'
       - '.github/workflows/android-apk.yml'
 
 permissions:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build:
-    name: Build HoleLight V0.5.3 APK
+    name: Build HoleLight V0.5.4 APK
     runs-on: ubuntu-latest
 
     steps:
@@ -42,19 +42,19 @@ jobs:
       - name: Check source archive
         run: |
           ls -lah
-          test -f HoleLight-AOD-v0.5.3-source.zip
+          test -f HoleLight-AOD-v0.5.4-source.zip
 
       - name: Extract source
         shell: bash
         run: |
           set -e
           mkdir -p holelight-project
-          unzip -o HoleLight-AOD-v0.5.3-source.zip -d holelight-project
+          unzip -o HoleLight-AOD-v0.5.4-source.zip -d holelight-project
 
-          if [ -f holelight-project/HoleLight-AOD-v0.5.3/settings.gradle.kts ]; then
+          if [ -f holelight-project/HoleLight-AOD-v0.5.4/settings.gradle.kts ]; then
             shopt -s dotglob nullglob
-            mv holelight-project/HoleLight-AOD-v0.5.3/* holelight-project/
-            rmdir holelight-project/HoleLight-AOD-v0.5.3
+            mv holelight-project/HoleLight-AOD-v0.5.4/* holelight-project/
+            rmdir holelight-project/HoleLight-AOD-v0.5.4
           fi
 
           test -f holelight-project/settings.gradle.kts
@@ -71,7 +71,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: HoleLight-v0.5.3-debug-apk
+          name: HoleLight-v0.5.4-debug-apk
           path: holelight-project/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7
