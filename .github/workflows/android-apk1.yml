@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'HoleLight-AOD-v0.7.0-source.zip'
+      - 'HoleLight-AOD-v0.7.0-source-fixed.zip'
       - '.github/workflows/android-apk.yml'
 
 permissions:
@@ -40,19 +40,21 @@ jobs:
           gradle-version: '8.9'
 
       - name: Check source archive
-        run: test -f HoleLight-AOD-v0.7.0-source.zip
+        run: test -f HoleLight-AOD-v0.7.0-source-fixed.zip
 
       - name: Extract source
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p holelight-project
-          unzip -o HoleLight-AOD-v0.7.0-source.zip -d holelight-project
+          unzip -o HoleLight-AOD-v0.7.0-source-fixed.zip -d holelight-project
+
           if [ -f holelight-project/HoleLight-AOD-v0.7.0/settings.gradle.kts ]; then
             shopt -s dotglob nullglob
             mv holelight-project/HoleLight-AOD-v0.7.0/* holelight-project/
             rmdir holelight-project/HoleLight-AOD-v0.7.0
           fi
+
           test -f holelight-project/settings.gradle.kts
           test -f holelight-project/app/build.gradle.kts
           test -f holelight-project/app/src/main/assets/maml-aod/aod/content/manifest.xml
